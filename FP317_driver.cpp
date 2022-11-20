@@ -5,20 +5,18 @@
  * Pin and display settings are configured using FP317_driver_pins.h
  * 
  * Created by Andrew (Novar Lynx) (C) 2022
+ * License is LGPL 2.1 https://www.gnu.org/licenses/old-licenses/lgpl-2.1.en.html
  */
+
+// IMPORTANT: FP317_driver_pins.h must be provided as it holds configuration for the class instance (Pin assignments and other parameters)
 
 #include "Arduino.h"
 #include "FP317_driver.h"
 #include "FP317_driver_pins.h"
 
-// screen width and height is determined by code that runs in the constructor
 FP317_driver::FP317_driver()
 {
-  // Calculate the width and height of the entire array of displays
-  // Step 1, count the display rows and display columns.
-  byte gridXcount = 0;
-  byte gridYcount = 0;
-
+  // configure pins
   pinMode(PIN_U1_A0, OUTPUT);
   pinMode(PIN_U1_A1, OUTPUT);
   pinMode(PIN_U1_A2, OUTPUT); 
@@ -30,6 +28,10 @@ FP317_driver::FP317_driver()
   pinMode(PIN_U2_A2, OUTPUT);
   pinMode(PIN_U2_B0, OUTPUT); // also U2_DATA
   pinMode(PIN_U2_B1, OUTPUT);
+
+  // Calculate the width and height of the entire array of displays
+  byte gridXcount = 0;
+  byte gridYcount = 0;
 
   for (int i = 0; i < getDispCnt(); i++)
   {
@@ -45,25 +47,18 @@ FP317_driver::FP317_driver()
         gridYcount += 1;
       }
     }
+    // Configure the ENABLE pins while we're at it
     pinMode(displays[i].PIN_U1_ENABLE, OUTPUT);
     pinMode(displays[i].PIN_U2_ENABLE, OUTPUT);
     digitalWrite(displays[i].PIN_U1_ENABLE, LOW);
     digitalWrite(displays[i].PIN_U2_ENABLE, LOW);
   }
-  // Step 2, using the counts, figure out the width and height
+  // Using the counts, figure out the width and height
   width = 28 * gridXcount - 1;
   height = 14 * gridYcount - 1;
 
   // Clear the display
   clearDisplay(); 
-
-  delay(1000);
-
-  Serial.begin(9600);
-  Serial.println("Lynxtech controller for Ferranti Packard 317 flip dot displays"); 
-  Serial.print(width); 
-  Serial.print("x");
-  Serial.println(height);
 }
 
 void FP317_driver::setDot(int16_t x, int16_t y, bool state)
@@ -82,7 +77,7 @@ void FP317_driver::setDot(int16_t x, int16_t y, bool state)
   // For simplicity for code we'll start at 0 instead:
   // 1 = 0 to 27; 2 = 28 to 55; 3 = 56 to 83; 4 = 84 to 111.
 
-  // Step 1, find the display in the array.
+  // Find the display in the array.
   byte gridX = (x / 28) + 1;
   byte gridY = (y / 14) + 1;
   bool found = false;
@@ -129,7 +124,9 @@ void FP317_driver::setDot(int16_t x, int16_t y, bool state)
   if (even) { yGroup = invertNum(yGroup, 1); }
   if (!even) { yPixel = invertNum(yPixel, 8); }
 
-  /*Serial.print("Module found ");
+  /*
+  // Shit used for debug, uncomment if needed lol
+  Serial.print("Module found ");
   Serial.print(disp.gridX);
   Serial.print(",");
   Serial.print(disp.gridY);
@@ -144,20 +141,18 @@ void FP317_driver::setDot(int16_t x, int16_t y, bool state)
   Serial.print("; state ");
   Serial.println(state);*/
 
-  // Step 4, set the U1 chips
+  // Step 4, set the FP2800 chips
   digitalWrite(PIN_U1_A0, xPixel & 0x01);
   digitalWrite(PIN_U1_A1, xPixel & 0x02);
   digitalWrite(PIN_U1_A2, xPixel & 0x04);
   digitalWrite(PIN_U1_B0, xGroup & 0x01);
-  digitalWrite(PIN_U1_B1, xGroup & 0x02);
-    
-  // Step 5, set the U2 chips
+  digitalWrite(PIN_U1_B1, xGroup & 0x02);   
   digitalWrite(PIN_U2_A0, yPixel & 0x01);
   digitalWrite(PIN_U2_A1, yPixel & 0x02);
   digitalWrite(PIN_U2_A2, yPixel & 0x04);
   digitalWrite(PIN_U2_B1, yGroup & 0x01);
 
-  // Step 6, set the state. 
+  // Step 5, set the state. 
   // If this is an even module, the dot colors are reversed
   if (even) { state = !state; }
   if (state == true)
@@ -169,12 +164,12 @@ void FP317_driver::setDot(int16_t x, int16_t y, bool state)
     digitalWrite(PIN_U1_DATA, LOW);
   }
 
-  // Step 7, enable pulse!!
+  // Step 6, enable pulse!!
   digitalWrite(disp.PIN_U1_ENABLE, HIGH);
   digitalWrite(disp.PIN_U2_ENABLE, HIGH);
   delayMicroseconds(250);
   digitalWrite(disp.PIN_U1_ENABLE, LOW);
-  digitalWrite(disp.PIN_U2_ENABLE, LOW);
+  digitalWrite(disp.PIN_U2_ENABLE, LOW);  
 }
 
 void FP317_driver::clearDisplay()

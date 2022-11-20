@@ -5,7 +5,10 @@
  * Pin and display settings are configured using FP317_driver_pins.h
  * 
  * Created by Andrew (Novar Lynx) (C) 2022
+ * License is LGPL 2.1 https://www.gnu.org/licenses/old-licenses/lgpl-2.1.en.html
  */
+
+// IMPORTANT: FP317_driver_pins.h must be provided as it holds configuration for the class instance (Pin assignments and other parameters)
 
 #ifndef FP317_driver_h
 #define FP317_driver_h
