@@ -45,6 +45,15 @@ Module GridX and GridY diagram:
 -------------------------------------
                                         .... etc
  */   
+// Struct to hold data on FP317 modules, for the program
+// DO NOT MESS WITH THIS
+typedef struct {
+  bool enabled;
+  byte gridX; // 1 to 4, X location in the display grid
+  byte gridY; // 1 to 2, Y location in the display grid
+  byte PIN_U1_ENABLE; // IO pin of U1 enable
+  byte PIN_U2_ENABLE; // IO pin of U2 enable
+} FP317_module;
 
 //===============================================================
 // MCU: Espressif ESP32 Mini 1 DevBoard (Max 4 modules, 56 x 28)
@@ -72,15 +81,6 @@ Module GridX and GridY diagram:
   };
  #endif
 
-// Struct to hold data on FP317 modules, for the program
-// DO NOT MESS WITH THIS
-typedef struct {
-  bool enabled;
-  byte gridX; // 1 to 4, X location in the display grid
-  byte gridY; // 1 to 2, Y location in the display grid
-  byte PIN_U1_ENABLE; // IO pin of U1 enable
-  byte PIN_U2_ENABLE; // IO pin of U2 enable
-} FP317_module;
 
 
 /* More on pin assignments, lots of technobabble here
