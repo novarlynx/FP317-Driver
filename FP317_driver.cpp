@@ -9,6 +9,10 @@
  */
 
 // IMPORTANT: FP317_driver_pins.h must be provided as it holds configuration for the class instance (Pin assignments and other parameters)
+// You can download it from my github: https://github.com/novarlynx/FP317-Driver/blob/main/FP317_driver_pins.h
+
+// When initialized the driver will automatically determine the display's width and height based on which boards are enabled in FP317_driver_pins.h
+// Please see the comments in that file for more details on this function.
 
 #include "Arduino.h"
 #include "FP317_driver.h"
@@ -48,10 +52,8 @@ FP317_driver::FP317_driver()
       }
     }
     // Configure the ENABLE pins while we're at it
-    pinMode(displays[i].PIN_U1_ENABLE, OUTPUT);
-    pinMode(displays[i].PIN_U2_ENABLE, OUTPUT);
-    digitalWrite(displays[i].PIN_U1_ENABLE, LOW);
-    digitalWrite(displays[i].PIN_U2_ENABLE, LOW);
+    pinMode(displays[i].PIN_ENABLE, OUTPUT);
+    digitalWrite(displays[i].PIN_ENABLE, LOW);
   }
   // Using the counts, figure out the width and height
   width = 28 * gridXcount - 1;
@@ -165,11 +167,9 @@ void FP317_driver::setDot(int16_t x, int16_t y, bool state)
   }
 
   // Step 6, enable pulse!!
-  digitalWrite(disp.PIN_U1_ENABLE, HIGH);
-  digitalWrite(disp.PIN_U2_ENABLE, HIGH);
+  digitalWrite(disp.PIN_ENABLE, HIGH);
   delayMicroseconds(250);
-  digitalWrite(disp.PIN_U1_ENABLE, LOW);
-  digitalWrite(disp.PIN_U2_ENABLE, LOW);  
+  digitalWrite(disp.PIN_ENABLE, LOW);
 }
 
 void FP317_driver::clearDisplay()

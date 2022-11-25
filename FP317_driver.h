@@ -9,6 +9,10 @@
  */
 
 // IMPORTANT: FP317_driver_pins.h must be provided as it holds configuration for the class instance (Pin assignments and other parameters)
+// You can download it from my github: https://github.com/novarlynx/FP317-Driver/blob/main/FP317_driver_pins.h
+
+// When initialized the driver will automatically determine the display's width and height based on which boards are enabled in FP317_driver_pins.h
+// Please see the comments in that file for more details on this function.
 
 #ifndef FP317_driver_h
 #define FP317_driver_h
