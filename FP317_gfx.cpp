@@ -6,16 +6,19 @@
  * Created by Andrew (Novar Lynx) (C) 2022
  * License is LGPL 2.1 https://www.gnu.org/licenses/old-licenses/lgpl-2.1.en.html
  * 
- * Note, since the screen is effectively monochrome, any color that is not black (0) will turn ON the dot.
- * Also note, due to the rather low resolution of FP screens, nearly all the font files in the Adafruit library are pretty useless.
- * I recommend using Nieto's Luminator font classes found in his MAX3000 flip dot display library at https://github.com/NietoSkunk/MAX3000_Library
- * 
+ * General Notes:
+ * 1. Since the screen is effectively monochrome, any color that is not black (0) will turn ON the dot.
+ * 2. Due to the rather low resolution of flip dot screens, nearly all the font files in the Adafruit library are pretty useless.
+   For this reason I have created a font for these displays based off an actual font Ferranti-Packard used, called Ferranti7.h.
+   Nieto's Luminator fonts work well too: https://github.com/NietoSkunk/MAX3000_Library
+   
+ 
  * IMPORTANT: FP317_driver_pins.h must be provided as it holds configuration for the class instance (Pin assignments and other parameters)
  */
 
 #include "Arduino.h"
 #include <Adafruit_GFX.h>
-#include "FP317_driver.h"
+#include <FP317_driver.h>
 #include "FP317_gfx.h"
 
 // screen width and height is determined by code that runs in the FP317 driver's constructor, unlike other implementations of Adafruit_GFX.
@@ -45,7 +48,7 @@ void FP317_gfx::clearDisplay()
   drv->clearDisplay();
 }
 
-// Artifical lag
+// Interface for setting the artificial lag, in milliseconds.
 void FP317_gfx::setLag(int16_t lag_)
 {
   lag = lag_;

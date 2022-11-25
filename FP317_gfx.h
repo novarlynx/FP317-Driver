@@ -11,8 +11,8 @@
 #define FP317_gfx_h
 
 #include "Arduino.h"
-#include "Adafruit_GFX.h"
-#include "FP317_driver.h"
+#include <Adafruit_GFX.h>
+#include <FP317_driver.h>
 
 class FP317_gfx : public Adafruit_GFX
 {
@@ -20,9 +20,9 @@ class FP317_gfx : public Adafruit_GFX
   int16_t lag = 0;
   public:
     FP317_gfx();
-    void drawPixel(int16_t x, int16_t y, uint16_t color);
-    void clearDisplay();
-    void setLag(int16_t lag_);
+    void drawPixel(int16_t x, int16_t y, uint16_t color); // Override of the GFX lib's drawPixel function
+    void clearDisplay(); // Allows access to the driver class's clear display function.
+    void setLag(int16_t lag_); // Number of milliseconds to delay after each operation of drawPixel(), for aesthetics. Defaults to 0.
 
 
 };
