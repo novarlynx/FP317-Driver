@@ -8,9 +8,9 @@
  */
 
 //===============================================================
-// UNCOMMENT THE LINE FOR THE MCU YOU'RE USING BELOW!
+// UNCOMMENT THE LINE FOR THE MCU YOU'RE USING BELOW! (Don't uncomment more than one!)
 #define MCU_TYPE_ESP32_Mini_1
-//#define MCU_TYPE_ARDUINO_UNO // not implemented yet
+//#define MCU_TYPE_ARDUINO_UNO_R3
 //===============================================================
 
 /*
@@ -51,8 +51,7 @@ typedef struct {
   bool enabled;
   byte gridX; // 1 to 4, X location in the display grid
   byte gridY; // 1 to 2, Y location in the display grid
-  byte PIN_U1_ENABLE; // IO pin of U1 enable
-  byte PIN_U2_ENABLE; // IO pin of U2 enable
+  byte PIN_ENABLE; // IO pin of U1 enable
 } FP317_module;
 
 //===============================================================
@@ -60,6 +59,7 @@ typedef struct {
 //===============================================================
  #ifdef MCU_TYPE_ESP32_Mini_1
   // FP2800A driver pin assignments
+  // Pins 34 to 39 are input only and do not use pins 1 and 3
   const int8_t PIN_U1_A0 = 14;
   const int8_t PIN_U1_A1 = 32;
   const int8_t PIN_U1_A2 = 18; 
@@ -74,14 +74,54 @@ typedef struct {
   
   // Display module configuration table
   FP317_module displays[8] = {
-  {  true, 1, 1, 21, 19}, // Upper left module
-  { false, 2, 1, 00, 00},
-  {  true, 1, 2, 22, 23}, // Lower left module
-  { false, 2, 2, 00, 00},
+  {  true, 1, 1, 21}, // Upper left module
+  { false, 2, 1, 22},
+  {  true, 1, 2, 23}, // Lower left module
+  { false, 2, 2, 19},
   };
+  /*
+  Enable pin conversion table
+  FP317  ESP32
+  1 & 4    21
+  2 & 6    22
+  3 & 7    19
+  4 & 8    23
+  */
  #endif
 
-
+//===============================================================
+// MCU: Arduino Uno R3 (Atmega 328)
+//===============================================================
+ #ifdef MCU_TYPE_ARDUINO_UNO_R3
+  // FP2800A driver pin assignments (Do not use 0 and 1!)
+  const int8_t PIN_U1_A0 = 12;
+  const int8_t PIN_U1_A1 = 11;
+  const int8_t PIN_U1_A2 = 10; 
+  const int8_t PIN_U1_B0 = 9;
+  const int8_t PIN_U1_B1 = 8;
+  const int8_t PIN_U1_DATA = 7;
+  const int8_t PIN_U2_A0 = 6;
+  const int8_t PIN_U2_A1 = 5;
+  const int8_t PIN_U2_A2 = 4;
+  const int8_t PIN_U2_B0 = 3;
+  const int8_t PIN_U2_B1 = 2;
+  
+  // Display module configuration table
+  FP317_module displays[8] = {
+  {  true, 1, 1, 21}, // Upper left module
+  { false, 2, 1, 22},
+  {  true, 1, 2, 23}, // Lower left module
+  { false, 2, 2, 19},
+  };
+  /*
+  Enable pin conversion table
+  FP317  Uno R3
+  1 & 4    14 (A0)
+  2 & 6    15 (A1)
+  3 & 7    16 (A2)
+  4 & 8    17 (A3)
+  */
+ #endif
 
 /* More on pin assignments, lots of technobabble here
 
@@ -99,7 +139,8 @@ To set a dot, the A and B pins on both U1 and U2 have to be set accordingly.
 U1 A0, A1, A2 select one of 7 columns within a column group.
 U1 B0, B1 select one of four column groups.
 U2 A0, A1, A2 select one of 7 rows within a row group.
-U2 B0, B1 select one of two row groups.
+U2 B1 select one of two row groups.
+(U2 B0 is combined with U2 DATA pin)
 
 U1 and U2 also have the DATA pin, which is used to set which way the dot is flipped. On some modules, 1 = on, 0 = off, but on
 other modules this is reversed as the dots were installed backwards so the module can be installed upside down against another module.
